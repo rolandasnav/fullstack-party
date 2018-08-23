@@ -1,0 +1,7 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    {% for issue in issues %}
+        {{ dump(issue) }}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <a href="{{ path('login') }}">Login with GitHub</a>
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <a href="{{ path('logout') }}">Logout</a>
+    {% endif %}
+{% endblock %}
