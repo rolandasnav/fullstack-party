@@ -15,7 +15,12 @@ class IssueManager
     private $session;
     private $client;
     private $pager;
-    
+
+    /**
+     * IssueManager constructor.
+     * @param Client $client
+     * @param SessionInterface $session
+     */
     public function __construct(Client $client, SessionInterface $session)
     {
         $this->client = $client;
@@ -24,16 +29,25 @@ class IssueManager
         $this->pager = new ResultPager($this->client);
     }
 
-    public function authenticate()
+    /**
+     * Authenticates the user sending the request
+     */
+    public function authenticate(): void
     {
         $this->client->authenticate($this->session->get('access_token'), Client::AUTH_HTTP_TOKEN);
     }
 
-    public function getIssues(int $page = 1)
+    /**
+     * Returns the first or specific page of users' issues
+     *
+     * @param int $page
+     * @return array
+     */
+    public function getIssues(int $page = 1): array
     {
         $issues = [];
         $result = $this->pager->fetch($this->client->currentUser(), 'issues', [
-            ['per_page' => 4, 'page' => $page]
+            ['per_page' => 4, 'page' => $page, 'state' => 'all']
         ]);
 
         foreach ($result as $data) {
@@ -43,8 +57,17 @@ class IssueManager
         return $issues;
     }
 
-    public function getIssue(string $repoOwner, string $repoName, int $number)
+    /**
+     * Returns an issue
+     *
+     * @param string $repoOwner
+     * @param string $repoName
+     * @param int $number
+     * @return Issue
+     */
+    public function getIssue(string $repoOwner, string $repoName, int $number): Issue
     {
+
         $result = $this->client->issue()->show($repoOwner, $repoName, $number);
         $result['repository']['owner']['login'] = $repoOwner;
         $result['repository']['name'] = $repoName;
@@ -52,7 +75,15 @@ class IssueManager
         return $this->populateIssue($result);
     }
 
-    public function getComments(string $repoOwner, string $repoName, int $number)
+    /**
+     * Returns all the comments, which belong to an issue
+     *
+     * @param string $repoOwner
+     * @param string $repoName
+     * @param int $number
+     * @return array
+     */
+    public function getComments(string $repoOwner, string $repoName, int $number): array
     {
         $comments = [];
         $result = $this->client->issue()->comments()->all($repoOwner, $repoName, $number);
@@ -64,7 +95,33 @@ class IssueManager
         return $comments;
     }
 
-    private function populateIssue(array $data)
+    /**
+     * Returns the users' open issue count
+     *
+     * @return int
+     */
+    public function getOpenIssueCount(): int
+    {
+        return count($this->client->currentUser()->issues(['state' => 'open']));
+    }
+
+    /**
+     * Returns the users' closed issue count
+     *
+     * @return int
+     */
+    public function getClosedIssueCount(): int
+    {
+        return count($this->client->currentUser()->issues(['state' => 'closed']));
+    }
+
+    /**
+     * Populates the Issue object with data received from the API
+     *
+     * @param array $data
+     * @return Issue
+     */
+    private function populateIssue(array $data): Issue
     {
         $issue = new Issue();
         $issue->setNumber($data['number']);
@@ -81,7 +138,13 @@ class IssueManager
         return $issue;
     }
 
-    private function populateComment(array $data)
+    /**
+     * Populates the Comment object with data received from the API
+     *
+     * @param array $data
+     * @return Comment
+     */
+    private function populateComment(array $data): Comment
     {
         $comment = new Comment();
         $comment->setAuthor($data['user']['login']);
@@ -92,11 +155,16 @@ class IssueManager
         return $comment;
     }
 
-    public function parseLastPageNumber()
+    /**
+     * Returns the last page number or null if already on it
+     *
+     * @return int|null
+     */
+    public function parseLastPageNumber(): ?int
     {
         $pagination = $this->pager->getPagination();
 
-        if (array_key_exists('last', $pagination)) {
+        if ($pagination && array_key_exists('last', $pagination)) {
             $parts = parse_url($pagination['last']);
             parse_str($parts['query'], $query);
 

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class GithubAuthenticator extends SocialAuthenticator
@@ -22,6 +23,12 @@ class GithubAuthenticator extends SocialAuthenticator
     private $router;
     private $session;
 
+    /**
+     * GithubAuthenticator constructor.
+     * @param ClientRegistry $clientRegistry
+     * @param RouterInterface $router
+     * @param SessionInterface $session
+     */
     public function __construct(ClientRegistry $clientRegistry, RouterInterface $router, SessionInterface $session)
     {
         $this->clientRegistry = $clientRegistry;
@@ -29,17 +36,30 @@ class GithubAuthenticator extends SocialAuthenticator
         $this->session = $session;
     }
 
-    public function supports(Request $request)
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    public function supports(Request $request): bool
     {
         return $request->attributes->get('_route') === 'login_check';
     }
 
+    /**
+     * @param Request $request
+     * @return AccessToken|mixed
+     */
     public function getCredentials(Request $request)
     {
         return $this->fetchAccessToken($this->getGithubClient());
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    /**
+     * @param mixed $credentials
+     * @param UserProviderInterface $userProvider
+     * @return null|\Symfony\Component\Security\Core\User\UserInterface
+     */
+    public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
     {
         $this->saveAccessToken($credentials);
 
@@ -49,17 +69,28 @@ class GithubAuthenticator extends SocialAuthenticator
     /**
      * @return OAuth2Client
      */
-    private function getGithubClient()
+    private function getGithubClient(): OAuth2Client
     {
         return $this->clientRegistry->getClient('github');
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $providerKey
+     * @return null|Response
+     */
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
         return null;
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return null|JsonResponse|Response
+     */
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = array(
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
@@ -69,9 +100,11 @@ class GithubAuthenticator extends SocialAuthenticator
     }
 
     /**
-     * Called when authentication is needed, but it's not sent
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return JsonResponse|Response
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $data = array(
             // you might translate this message

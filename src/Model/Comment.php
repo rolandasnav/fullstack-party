@@ -11,55 +11,55 @@ class Comment
     private $creationDate;
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getAuthor()
+    public function getAuthor(): string
     {
         return $this->author;
     }
 
     /**
-     * @param mixed $author
+     * @param string $author
      */
-    public function setAuthor($author): void
+    public function setAuthor(string $author): void
     {
         $this->author = $author;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getAvatar()
+    public function getAvatar(): string
     {
         return $this->avatar;
     }
 
     /**
-     * @param mixed $avatar
+     * @param string $avatar
      */
-    public function setAvatar($avatar): void
+    public function setAvatar(string $avatar): void
     {
         $this->avatar = $avatar;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getBody()
+    public function getBody(): string
     {
         return $this->body;
     }
 
     /**
-     * @param mixed $body
+     * @param string $body
      */
-    public function setBody($body): void
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCreationDate()
     {
@@ -67,9 +67,9 @@ class Comment
     }
 
     /**
-     * @param mixed $creationDate
+     * @param string $creationDate
      */
-    public function setCreationDate($creationDate): void
+    public function setCreationDate(string $creationDate): void
     {
         $this->creationDate = $creationDate;
     }
