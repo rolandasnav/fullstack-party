@@ -27,3 +27,10 @@ If you found this task it means we are looking for you!
 - Structure! WE LOVE STRUCTURE!
 - Maybe You have an idea how it should interact with users? Do it! Its on you!
 - Have fun!
+
+## Setup
+
+1. Add your CLIENT_ID and CLIENT_SECRET to the .env file
+2. Make sure that the callback URI points to /login-check
+3. Run composer install
+4. Run php bin/console server:run
