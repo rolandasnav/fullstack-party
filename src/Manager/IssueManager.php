@@ -5,7 +5,6 @@ namespace App\Manager;
 
 use App\Model\Comment;
 use App\Model\Issue;
-use App\Model\IssuePager;
 use Github\Client;
 use Github\ResultPager;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -41,13 +40,14 @@ class IssueManager
      * Returns the first or specific page of users' issues
      *
      * @param int $page
+     * @param string $state
      * @return array
      */
-    public function getIssues(int $page = 1): array
+    public function getIssues(int $page = 1, string $state): array
     {
         $issues = [];
         $result = $this->pager->fetch($this->client->currentUser(), 'issues', [
-            ['per_page' => 4, 'page' => $page, 'state' => 'all']
+            ['per_page' => 4, 'page' => $page, 'state' => $state]
         ]);
 
         foreach ($result as $data) {
@@ -102,7 +102,7 @@ class IssueManager
      */
     public function getOpenIssueCount(): int
     {
-        return count($this->client->currentUser()->issues(['state' => 'open']));
+        return count($this->client->currentUser()->issues(['state' => Issue::STATE_OPEN]));
     }
 
     /**
@@ -112,7 +112,7 @@ class IssueManager
      */
     public function getClosedIssueCount(): int
     {
-        return count($this->client->currentUser()->issues(['state' => 'closed']));
+        return count($this->client->currentUser()->issues(['state' => Issue::STATE_CLOSED]));
     }
 
     /**

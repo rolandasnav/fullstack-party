@@ -2,5 +2,9 @@
 
 {% block content %}
     {{ dump(issue) }}
-    {{ dump(comments) }}
+    {{ issue.creationDate|age }}
+    {% for comment in comments %}
+        {{ dump(comment) }}
+        {{ comment.creationDate|age }}
+    {% endfor %}
 {% endblock %}

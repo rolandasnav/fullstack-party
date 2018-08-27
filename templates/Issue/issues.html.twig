@@ -3,5 +3,6 @@
 {% block content %}
     {% for issue in issues %}
         {{ dump(issue) }}
+        {{ issue.creationDate|age }}
     {% endfor %}
 {% endblock %}

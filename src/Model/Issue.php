@@ -3,8 +3,14 @@
 namespace App\Model;
 
 
+use DateTime;
+
 class Issue
 {
+    const STATE_OPEN = 'open';
+    const STATE_CLOSED = 'closed';
+    const STATE_ALL = 'all';
+
     private $number;
     private $title;
     private $body;
@@ -129,9 +135,9 @@ class Issue
     }
 
     /**
-     * @return mixed
+     * @return DateTime
      */
-    public function getCreationDate()
+    public function getCreationDate(): DateTime
     {
         return $this->creationDate;
     }
@@ -141,7 +147,7 @@ class Issue
      */
     public function setCreationDate(string $creationDate): void
     {
-        $this->creationDate = $creationDate;
+        $this->creationDate = new DateTime($creationDate);
     }
 
     /**

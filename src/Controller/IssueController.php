@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Manager\IssueManager;
+use App\Model\Issue;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,7 +28,7 @@ class IssueController extends Controller
      */
     public function issues(int $page): Response
     {
-        $issues = $this->issueManager->getIssues($page);
+        $issues = $this->issueManager->getIssues($page, Issue::STATE_ALL);
         $lastPage = $this->issueManager->parseLastPageNumber();
         $openIssueCount = $this->issueManager->getOpenIssueCount();
         $closedIssueCount = $this->issueManager->getClosedIssueCount();

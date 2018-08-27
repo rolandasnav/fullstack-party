@@ -3,6 +3,8 @@
 namespace App\Model;
 
 
+use DateTime;
+
 class Comment
 {
     private $author;
@@ -59,9 +61,9 @@ class Comment
     }
 
     /**
-     * @return string
+     * @return DateTime
      */
-    public function getCreationDate()
+    public function getCreationDate(): DateTime
     {
         return $this->creationDate;
     }
@@ -71,6 +73,6 @@ class Comment
      */
     public function setCreationDate(string $creationDate): void
     {
-        $this->creationDate = $creationDate;
+        $this->creationDate = new DateTime($creationDate);
     }
 }
